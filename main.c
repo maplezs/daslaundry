@@ -55,10 +55,10 @@ int main(){
         clearscrn();loginadmin();
         break;
     case 2:
-        loginuser();
+        clearscrn();loginuser();
         break;
     case 3:
-        userbaru();
+        clearscrn();userbaru();
         break;
 	  case 4:
 		exit(0);
@@ -106,7 +106,6 @@ void loginuser(){
 	char sandiuser[40];
     } listuser;
     flistuser = fopen("daftaruser.dat", "rb");
-    clearscrn();
     printf("Nama user : ");fgets(namauser, sizeof(namauser), stdin);
     fflush(stdin);
     printf("Kata sandi : ");fgets(sandiuser, sizeof(sandiuser), stdin);
@@ -117,9 +116,12 @@ void loginuser(){
         fclose(flistuser);
         menuuser();
     	}
-    }
-    puts("Nama user atau sandi salah!");getchar();getchar();
-    loginuser();
+    	else {
+			clearscrn();
+			puts("Username atau Password salah");
+			loginuser();
+		}
+	}
 }
 void userbaru(){
     struct user{
@@ -127,7 +129,6 @@ void userbaru(){
 	char sandiuser[40];
     }  listuser;
 	flistuser = fopen("daftaruser.dat", "ab");
-    clearscrn();
     getchar();
 	printf("Masukkan nama pengguna  : ");fgets(listuser.namauser, sizeof(listuser.namauser), stdin);
 	fflush(stdin);
@@ -176,10 +177,11 @@ void menuuser(){
     int pilihanuser;
     clearscrn();
     printf("Selamat datang %s", userlog);
-    printf("di Daslaundry!\n");
+    puts("di Daslaundry!");
     puts("====MENU USER====");
     puts("1. Buat pesanan baru");
     puts("2. Cek konfirmasi pesanan");
+    puts("3. Kembali ke menu");
     printf("Masukkan pilihan : ");scanf("%d", &pilihanuser);
     switch (pilihanuser)
     {
