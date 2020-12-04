@@ -1,35 +1,33 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 // Prototype fungsi untuk bersihkan layar tiap masuk ke sebuah menu dapat berfungsi di Linux, Mac OS dan Windows
 void clearscrn();
-// Prototype prosedur untuk user admin
-	// untuk masuk ke user admin
-void loginadmin();
-	// menu pilihan admin
-void menuadmin();
-	// hapus pesanan yang sudah di-update
-void hapuspesanan();
-	// memperbarui status pesanan jika sudah selesai
-void updatestatus();
-	// melihat semua daftar pesanan yang sudah dibuat user
-void daftarpesanan();
-	// memberi harga pada pesanan user tertentu
-void beriharga();
-	// melihat semua daftar user yang sudah registrasi
-void daftaruser();
 
-// Prototype prosedur untuk user
-	// untuk login akun yang sudah teregistrasi
-void loginuser();
-	// membuat user baru
-void userbaru();
-	// menu user
-void menuuser();
-	// membuat pesanan baru
-void pesananbaru();
-	// cek konfirmasi pesanan dari admin
-void cekkonfir();
+// Prototype prosedur untuk user admin	
+void loginadmin(); 		// untuk masuk ke user admin
+void menuadmin(); 		// menu pilihan admin
+void hapuspesanan();	// hapus pesanan yang sudah di-update
+void updatestatus();	// memperbarui status pesanan jika sudah selesai
+void daftarpesanan();	// melihat semua daftar pesanan yang sudah dibuat user
+void beriharga();		// memberi harga pada pesanan user tertentu
+void daftaruser();		// melihat semua daftar user yang sudah registrasi
+void loginuser(); 		// untuk login akun yang sudah teregistrasi
+void userbaru(); 		// membuat user baru
+void menuuser();		// menu user
+void pesananbaru();		// membuat pesanan baru
+void cekkonfir(); 		// cek konfirmasi pesanan dari admin
+
+struct tgl{
+        char berat[10];
+        int tanggal;
+        int bulan;
+        char namauser[30];
+        double harga;
+        char status[40];
+        } datapesanan;
+        
 // Variabel
 char admuser[20], namauser[30];
 char admpasswd[40], sandiuser[40];
@@ -37,6 +35,7 @@ char status[30], buatbaru[2], userlog[30];
 FILE *fadmin;
 FILE *flistuser;
 FILE *fdatapesanan;
+
 // FUNGSI UTAMA
 int main(){
     int log;
@@ -65,7 +64,7 @@ int main(){
 		break;
     default:
         puts("Pilihan salah!");
-        getchar();getchar();
+        getchar();
         clearscrn();
         main();
     }
@@ -106,6 +105,7 @@ void loginuser(){
 	char sandiuser[40];
     } listuser;
     flistuser = fopen("daftaruser.dat", "rb");
+    printf("Login\n");
     printf("Nama user : ");fgets(namauser, sizeof(namauser), stdin);
     fflush(stdin);
     printf("Kata sandi : ");fgets(sandiuser, sizeof(sandiuser), stdin);
@@ -136,6 +136,8 @@ void userbaru(){
 	fwrite(&listuser,sizeof(listuser),1,flistuser);
 	fclose(flistuser);
 	puts("Pembuatan user baru telah selesai!");
+	getchar();
+	clearscrn();
     loginuser();
 }
 void menuadmin(){
@@ -181,8 +183,9 @@ void menuuser(){
     puts("====MENU USER====");
     puts("1. Buat pesanan baru");
     puts("2. Cek konfirmasi pesanan");
-    puts("3. Kembali ke menu");
+    puts("3. Keluar");
     printf("Masukkan pilihan : ");scanf("%d", &pilihanuser);
+    getchar();
     switch (pilihanuser)
     {
     case 1 :
@@ -192,6 +195,7 @@ void menuuser(){
         cekkonfir();
         break;
     case 3 : 
+		clearscrn();
         loginuser();
         break;
     default:
@@ -212,14 +216,6 @@ void daftaruser(){
     menuadmin();
 }
 void daftarpesanan(){
-    struct tgl{
-        char berat[10];
-        int tanggal;
-        int bulan;
-        char namauser[30];
-        double harga;
-        char status[40];
-    } datapesanan;
     fdatapesanan = fopen("datapesanan.dat", "rb");
     puts("DAFTAR PESANAN USER");
     while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
@@ -229,14 +225,6 @@ void daftarpesanan(){
     menuadmin();
 }
 void pesananbaru(){
-    struct tgl{
-        char berat[10];
-        int tanggal;
-        int bulan;
-        char namauser[30];
-        double harga;
-        char status[40];
-    } datapesanan;
     int pil;
     fdatapesanan = fopen("datapesanan.dat", "ab");
     puts("Anda akan membuat pesanan baru");
@@ -274,18 +262,10 @@ void updatestatus(){
 }
 */
 void cekkonfir(){
-    struct tgl{
-        char berat[10];
-        int tanggal;
-        int bulan;
-        char namauser[30];
-        double harga;
-        char status[40];
-    } datapesanan;
     fdatapesanan = fopen("datapesanan.dat", "rb");
     puts("Cek Konfirmasi Pesanan");
     while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1 && strcmp(datapesanan.namauser, userlog)==0){
-		printf("Status Pesanan anda saat ini adalah : %s", datapesanan.status);getchar();getchar();
+		printf("Status Pesanan anda saat ini adalah : %s", datapesanan.status);getchar();
     }
     menuuser();
 }
@@ -299,7 +279,5 @@ void beriharga(){
         double harga;
     } datapesanan;
     fdatapesanan = fopen("datapesanan.dat", "ab");
-    
-
 }
 */
