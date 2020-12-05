@@ -1,3 +1,8 @@
+/*
+ *===========DASLAUNDRY============ 
+ * 
+ * Program Laundry Berbasis Terminal
+ */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -10,36 +15,53 @@ void loginadmin(); 		// untuk masuk ke user admin
 void menuadmin(); 		// menu pilihan admin
 void hapuspesanan();	// hapus pesanan yang sudah di-update
 void daftarpesanan();	// melihat semua daftar pesanan yang sudah dibuat user
-void statusdanharga();		// memberi harga pada pesanan user tertentu serta memperbarui status pesanan
+void statusdanharga();	// memberi harga pada pesanan user tertentu serta memperbarui status pesanan
 void daftaruser();		// melihat semua daftar user yang sudah registrasi
 void loginuser(); 		// untuk login akun yang sudah teregistrasi
 void userbaru(); 		// membuat user baru
 void menuuser();		// menu user
 void pesananbaru();		// membuat pesanan baru
 void cekkonfir(); 		// cek konfirmasi pesanan dari admin
+
 // Deklarasi struct
 struct tgl{
         char berat[10];
         int tanggal;
-        int bulan;
         char namauser[30];
         int harga;
         char status[40];
 } datapesanan;
+struct tglx{
+        char berat[10];
+        int tanggal;
+        char namauser[30];
+        int harga;
+        char status[40];
+} temp[100];
+struct tglxx{
+        char berat[10];
+        int tanggal;
+        char namauser[30];
+        int harga;
+        char status[40];
+} tempx[100];
 struct user{
 	char namauser[30];
 	char sandiuser[40];
 }  listuser;
+
 // Variabel
 char admuser[20], nameuser[30];
 char admpasswd[40], passuser[40];
 char status[30], buatbaru[2], userlog[30], pilihuser[30];
+int temp2;
 FILE *fadmin;
 FILE *flistuser;
 FILE *fdatapesanan;
 FILE *fbackdatapesanan;
 FILE *fdatapesanan2;
 FILE *fdatapesanan3;
+
 // FUNGSI UTAMA
 int main(){
     // buat file kosong jika belum ada saat program mulai untuk mencegah error
@@ -51,6 +73,7 @@ int main(){
     fclose(fdatapesanan2);
     int log;
     // Menu utama terdapat pilihan login sebagai user atau admin serta pilihan untuk keluar dari program
+    puts("Selamat datang di Daslaundry");
     puts("Menu Login");
     puts("Login sebagai :");
     puts("1. Admin");
@@ -90,25 +113,16 @@ void clearscrn(){
 }
 // Prosedur login admin dengan database yang sudah ada
 void loginadmin(){
-    struct data {
-	char username[20];
-	char pass[40];
-    } ademin;
-    fadmin = fopen("dataadmin.dat", "rb");
-    printf("Username : ");fgets(admuser, sizeof(admuser), stdin);
-    fflush(stdin);
-    printf("Password : ");fgets(admpasswd, sizeof(admpasswd), stdin);
-    while(fread(&ademin,sizeof(ademin),1,fadmin)==1){
-		if(strcmp(admuser, ademin.username)==0 && strcmp(admpasswd, ademin.pass)==0){
-			fclose(fadmin);
-			menuadmin();
-		}
-		else{
-			clearscrn();
-			puts("Username atau Password salah");
-			loginadmin();
-		}
+    char useradmin[30];
+    char adminpass[40];
+    printf("Username : ");gets(useradmin); 
+    printf("Password : ");gets(adminpass); 
+	if(strcmp(useradmin, "admin")==0 && strcmp(adminpass, "123")==0){
+		menuadmin();
 	}
+	puts("Username dan Password salah!");
+	getchar();
+	loginadmin();
 }
 void menuadmin(){
     int admpilih;
@@ -153,14 +167,8 @@ void loginuser(){
         fclose(flistuser);
         menuuser();
     	}
-    	// kode yang di komen dibawah ini hapus saja bikin gaisa login jangan pake else intinya 
-    /*	else {
-			clearscrn();
-			puts("Username atau Password salah");
-			loginuser();
-		}*/
 	}
-	puts("Nama user atau sandi salah!");getchar();getchar();
+	puts("Nama user atau sandi salah!");getchar();
     loginuser();
 }
 void userbaru(){
@@ -178,8 +186,8 @@ void userbaru(){
 void menuuser(){
     int pilihanuser;
     clearscrn();
+    puts("====DASLAUNDRY===");
     printf("Selamat datang %s", userlog);
-    puts("di Daslaundry!");
     puts("====MENU USER====");
     puts("1. Buat pesanan baru");
     puts("2. Cek konfirmasi pesanan");
@@ -196,7 +204,7 @@ void menuuser(){
         break;
     case 3 : 
 		clearscrn();
-        loginuser();
+        main();
         break;
     default:
         puts("Pilihan salah!");
@@ -226,32 +234,103 @@ void daftaruser(){
     menuadmin();
 }
 void daftarpesanan(){
-    int y=0;
-    fdatapesanan = fopen("datapesanan.dat", "rb+");
-    fdatapesanan2 = fopen("datapesanan2.dat", "rb+");
+    int i=0;
+    int n;
     clearscrn();
     puts("DAFTAR PESANAN USER");
+    puts("DAFTAR PESANAN YANG BELUM SELESAI");
+    fdatapesanan = fopen("datapesanan.dat", "rb+");
     while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
-            y+=1;
-            printf("%d. Nama : %s Berat %s Tanggal %d\n Bulan :%d\n Status : %s\n", y, datapesanan.namauser, datapesanan.berat, datapesanan.tanggal, datapesanan.bulan, datapesanan.status);
+        strcpy(temp[i].namauser, datapesanan.namauser);
+        strcpy(temp[i].berat, datapesanan.berat);
+        strcpy(temp[i].status, datapesanan.status);
+        temp[i].harga = datapesanan.harga;
+        temp[i].tanggal = datapesanan.tanggal;
+        i++;
+        n=i;
     }
+    fclose(fdatapesanan);
+    i = 0;
+    int j;
+    if(n>0){
+    for(i=0;i<n;i++){
+        for(j=0;j<n-i-1;j++){
+            if(temp[j].tanggal>temp[j+1].tanggal){
+                temp2 = temp[j].tanggal;
+                temp[j].tanggal = temp[j+1].tanggal;
+                temp[j+1].tanggal = temp2;
+            }
+        }
+    }
+    for(i=0;i<n;i++){
+        printf("%d. Nama : %s Berat : %s Tanggal : %d\n Status : %s\n", i+1, temp[i].namauser, temp[i].berat, temp[i].tanggal, temp[i].status);
+		}
+    }
+    else
+    {
+        puts("Belum ada pesanan!");
+    }
+    
+    puts("DAFTAR PESANAN YANG SUDAH SELESAI");
+    fdatapesanan2 = fopen("datapesanan2.dat", "rb+");
+    i=0;
     while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan2)==1){
-            y+=1;
-            printf("%d. Nama : %s Berat %s Tanggal %d\n Bulan :%d\n Status : %s\n", y,datapesanan.namauser, datapesanan.berat, datapesanan.tanggal, datapesanan.bulan, datapesanan.status);
+        strcpy(tempx[i].namauser, datapesanan.namauser);
+        strcpy(tempx[i].berat, datapesanan.berat);
+        strcpy(tempx[i].status, datapesanan.status);
+        tempx[i].harga = datapesanan.harga;
+        tempx[i].tanggal = datapesanan.tanggal;
+        i++;
+        n=i;
     }
-    fclose(fdatapesanan);fclose(fdatapesanan2);
+    fclose(fdatapesanan2);
+    if (n==0){
+		puts("Tidak ada pesanan yang selesai");
+	}
+    else if(n>0){
+    for(i=0;i<n;i++){
+        for(j=0;j<n-i-1;j++){
+            if(tempx[j].tanggal>tempx[j+1].tanggal){
+                temp2 = tempx[j].tanggal;
+                tempx[j].tanggal = tempx[j+1].tanggal;
+                tempx[j+1].tanggal = temp2;
+            }
+            }
+        }
+    for(i=0;i<n;i++){
+        printf("%d. Nama : %s Berat : %s Tanggal : %d\n Status : %s\n", i+1, tempx[i].namauser, tempx[i].berat, tempx[i].tanggal, tempx[i].status);
+    }
+    }
+    else{
+        puts("Belum ada pesanan yang selesai!");
+    }
+
     getchar();getchar();
     menuadmin();
 }
 void pesananbaru(){
     int pil;
+    int a=0, b=0;
+    fdatapesanan = fopen("datapesanan.dat", "rb");
+    while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
+		if(strcmp(datapesanan.namauser, userlog)==0){
+			a+=1;
+		}
+	}
+	fclose(fdatapesanan);
+	fdatapesanan2 = fopen("datapesanan2.dat", "rb");
+	while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan2)==1){
+		if(strcmp(datapesanan.namauser, userlog)==0){
+			b+=1;
+		}
+	}
+	fclose(fdatapesanan2);			    
+	if(a>0 && b>0){
     fdatapesanan = fopen("datapesanan.dat", "ab");
     puts("Anda akan membuat pesanan baru");
     puts("Silahkan mengisi data-data pesanan :");
-    getchar();
     printf("Berapa berat cucian anda : ");fgets(datapesanan.berat, sizeof(datapesanan.berat), stdin);
     printf("Masukkan tanggal hari ini : ");scanf("%d", &datapesanan.tanggal);
-    printf("Masukkan bulan : ");scanf("%d", &datapesanan.bulan);
     strcpy(datapesanan.namauser, userlog);
     strcpy(datapesanan.status, "Menunggu Konfirmasi");
     datapesanan.harga = 0;
@@ -273,10 +352,16 @@ void pesananbaru(){
     default:
         puts("Pilihan salah!");getchar();getchar();
     }
-    
+}
+    else{
+		puts("Pesanan sudah ada!");
+		getchar();
+		menuuser();
+	}
 }
 void statusdanharga(){
     int i=0;
+    int i2;
     int harga;
     char konfirm[40]="Menunggu Konfirmasi";
     fdatapesanan = fopen("datapesanan.dat", "rb");
@@ -285,10 +370,24 @@ void statusdanharga(){
     while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
         if(strcmp(datapesanan.status, konfirm)==0){
         i+=1;
-        printf("%d. Nama : %s Berat %s Tanggal %d\n Bulan :%d\n Status : %s\n", i,datapesanan.namauser, datapesanan.berat, datapesanan.tanggal, datapesanan.bulan, datapesanan.status);
+        printf("%d. Nama : %s Berat %s Tanggal %d\n Status : %s\n", i,datapesanan.namauser, datapesanan.berat, datapesanan.tanggal, datapesanan.status);
        }
     }
     fclose(fdatapesanan);
+    puts("1. Pilih pesanan untuk diberi harga dan update");
+    puts("2. Kembali");
+    printf("Masukkan pilihan : ");scanf("%d", &i2);
+    switch (i2)
+    {
+    case 1:
+        break;
+    
+    case 2 :
+        menuadmin();
+        break;
+    default:
+        statusdanharga();
+    }
     getchar();
     if(i>0){
         printf("Pilih pesanan yang akan diupdate dan diberi harga berdasarkan nama user : ");fgets(pilihuser, sizeof(pilihuser), stdin);
@@ -322,68 +421,11 @@ void statusdanharga(){
         puts("Belum ada pesanan!");getchar();getchar();
         menuadmin();
     }
-// Semua Kode yang dikomen dibawah ini jangan dihapus dulu tunggu semua selesai, bisa saja nanti masih bisa kepakai 
-   // fdatapesanan = fopen("datapesanan.dat", "rb");
-    //fbackdatapesanan = fopen("backdatapesanan.dat", "ab");
-    //fflush(stdout);
-   // while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
-//			fwrite(&datapesanan,sizeof(datapesanan),1,fbackdatapesanan);
-   // }
-    //fclose(fdatapesanan);
-  //  fclose(fbackdatapesanan);
-    /*printf("Pilih pesanan yang akan diupdate dan diberi harga berdasarkan nama user : ");fgets(pilihuser, sizeof(pilihuser), stdin);
-    printf("Masukkan harga : ");scanf("%d", &harga);
-    fdatapesanan2 = fopen("datapesanan2.dat", "ab");
-   // fdatapesanan3 = fopen("datapesanan3.dat", "a+b");
-    fdatapesanan = fopen("datapesanan.dat", "rb");
-    //fbackdatapesanan = fopen("backdatapesanan.dat", "rb");
-    fdatapesanan3 = fopen("datapesanan3.dat", "ab");
-    while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
-    	if(strcmp(datapesanan.namauser,pilihuser)==0){
-            datapesanan.harga = harga;
-    	    strcpy(datapesanan.status, "Pesanan selesai");
-            fwrite(&datapesanan,sizeof(datapesanan),1,fdatapesanan2);
-        }
-    }
-    fclose(fdatapesanan);
-    fdatapesanan = fopen("datapesanan.dat", "rb");
-    while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
-        if(strcmp(datapesanan.namauser,pilihuser)!=0){
-            fwrite(&datapesanan,sizeof(datapesanan),1,fdatapesanan3);
-        }
-    }
-    fclose(fdatapesanan2);
-   // fdatapesanan = fopen("datapesanan.dat", "rb");
-    fclose(fdatapesanan);
-    fclose(fdatapesanan3);
-    //fflush(fdatapesanan);
-   /* fflush(fdatapesanan2);
-    while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1 && strcmp(datapesanan.namauser, pilihuser)==0){
-    	datapesanan.harga = harga;
-    	strcpy(&datapesanan.status, "Pesanan selesai");
-        rewind(fdatapesanan2);
-        fwrite(&datapesanan,sizeof(datapesanan),1,fdatapesanan2);
-        //fseek(fdatapesanan2,sizeof(datapesanan), SEEK_CUR);
-    }//fclose(fdatapesanan2);fclose(fdatapesanan);
-    //pesananbelum();
-    fflush(stdout);
-   while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
-    	if(strcmp(datapesanan.namauser,pilihuser)!=0){
-			fwrite(&datapesanan,sizeof(datapesanan),1,fdatapesanan2);
-		}
-	}
-    fclose(fdatapesanan);
-    fclose(fdatapesanan2);*/
-   /* remove("datapesanan.dat");
-    //remove("backdatapesanan.dat");
-	rename("datapesanan3.dat","datapesanan.dat");
-    puts("Pesanan berhasil diupdate dan diberi harga");getchar();getchar();
-    menuadmin();*/
-   // statusdanharga();
 }
 void hapuspesanan(){
     char username[30];
     int j;
+    int x1;
     fdatapesanan = fopen("datapesanan2.dat", "rb");
     clearscrn();
     j=0;
@@ -394,6 +436,20 @@ void hapuspesanan(){
     }
     fclose(fdatapesanan);
     getchar();
+    puts("1. Pilih dan hapus pesanan");
+    puts("2. Kembali");
+    printf("Masukkan pilihan : ");scanf("%d", &x1);
+    switch (x1)
+    {
+    case 1:
+        break;
+    
+    case 2 :
+        menuadmin();
+        break;
+    default:
+        hapuspesanan();
+    }
     if(j>0){
         printf("Pilih pesanan yang akan diupdate dan diberi harga berdasarkan nama user : ");fgets(username, sizeof(username), stdin);
     fdatapesanan = fopen("datapesanan2.dat", "rb");
@@ -415,23 +471,6 @@ void hapuspesanan(){
         puts("Belum ada pesanan yang selesai!");getchar();getchar();
         menuadmin();
     }
-    /*
-    printf("Pilih pesanan yang akan diupdate dan diberi harga berdasarkan nama user : ");fgets(username, sizeof(username), stdin);
-    fdatapesanan = fopen("datapesanan2.dat", "rb");
-    fdatapesanan2 = fopen("datapesanantmp.dat", "ab");
-    while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
-    	if(strcmp(datapesanan.namauser,username)!=0){
-            fwrite(&datapesanan,sizeof(datapesanan),1,fdatapesanan2);
-        }
-    }
-    fclose(fdatapesanan);
-    fclose(fdatapesanan2);
-    remove("datapesanan2.dat");
-	rename("datapesanantmp.dat","datapesanan2.dat");
-    puts("Pesanan berhasil dihapus!");getchar();getchar();
-    menuadmin();
-    */
-
 }
 void cekkonfir(){
     fdatapesanan = fopen("datapesanan.dat", "rb");
