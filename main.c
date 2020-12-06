@@ -1,13 +1,13 @@
 /*
  *===========DASLAUNDRY============ 
  * 
- * Program Laundry Berbasis Terminal
+ * Program Pendataan Laundry Berbasis Terminal
  */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-// Prototype fungsi untuk bersihkan layar tiap masuk ke sebuah menu dapat berfungsi di Linux, Mac OS dan Windows
+// Prototype prosedur untuk bersihkan layar tiap dipanggil dapat berfungsi di Linux, Mac OS dan Windows
 void clearscrn();
 
 // Prototype prosedur untuk admin	
@@ -410,7 +410,7 @@ void hapuspesanan(){
     }
 }
 
-// Mencari jumlah user yang sesuai berdasarkan tanggal pemesanan
+// Mencari jumlah pesanan yang sesuai berdasarkan tanggal pemesanan
 void searching(){
 	int temptanggal[100];
     int jumlah=0;
@@ -475,7 +475,7 @@ void loginuser(){
     loginuser();
 }
 
-// Menu user untuk melakukan pemesanan
+// Menu user untuk melakukan pemesanan serta cek konfirmasi pesanan
 void menuuser(){
     int pilihanuser;
     clearscrn();
@@ -548,17 +548,18 @@ void cekkonfir(){
     fdatapesanan = fopen("datapesanan.dat", "rb");
     fdatapesanan2 = fopen("datapesanan2.dat", "rb");
     puts("Cek Konfirmasi Pesanan");
+    puts("=======================================================");
     i = 0;
     while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
         if(strcmp(datapesanan.namauser, userlog)==0){
             i+=1;
-			printf("Status Pesanan anda saat ini adalah : %s\nHarga : %d", datapesanan.status, datapesanan.harga);getchar();
+			printf("Status Pesanan anda saat ini adalah : %s\nHarga : Rp. %d", datapesanan.status, datapesanan.harga);getchar();
         }
     }
     while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan2)==1){
         if(strcmp(datapesanan.namauser, userlog)==0){
             i+=1;
-			printf("Status Pesanan anda saat ini adalah : %s\nHarga : %d", datapesanan.status, datapesanan.harga);getchar();
+			printf("Status Pesanan anda saat ini adalah : %s\nHarga : Rp. %d", datapesanan.status, datapesanan.harga);getchar();
        }
     }
     if(i==0){
@@ -569,4 +570,3 @@ void cekkonfir(){
     fclose(fdatapesanan2);
     menuuser();
 }
-//
