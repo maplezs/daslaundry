@@ -181,6 +181,7 @@ void daftaruser(){
 // Melihat daftar pesanan user yang telah disorting 
 void daftarpesanan(){
     i=0;
+    n=0;
     puts("=========DAFTAR PESANAN USER=========");
     puts("DAFTAR PESANAN YANG BELUM SELESAI");
     fdatapesanan = fopen("datapesanan.dat", "rb");
@@ -268,10 +269,15 @@ void daftarpesanan(){
 // Memberikan harga secara manual kepada user yang melakukan pesanan 
 void statusdanharga(){
     i=0;
+    j=0;
     int i2;
     int harga;
-    char konfirm[40]="Menunggu Konfirmasi";
+   // char konfirm[40]="Menunggu Konfirmasi";
     fdatapesanan = fopen("datapesanan.dat", "rb");
+    while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
+        j+=1;
+    }
+    fclose(fdatapesanan);
     clearscrn();
     puts("Daftar pesanan yang belum dikonfirmasi dan diberi harga");
     puts("=======================================================");
@@ -335,12 +341,22 @@ void statusdanharga(){
         }
         }
         fclose(fdatapesanan);
-        fdatapesanan = fopen("datapesanan.dat", "rb");
-        while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
-        if(strcmp(datapesanan.namauser,pilihuser)!=0){
-            fwrite(&datapesanan,sizeof(datapesanan),1,fdatapesanan3);
-        }
-    }
+            if(j==1){
+            remove("datapesanan.dat");
+            fdatapesanan = fopen("datapesanan.dat", "ab");
+            fclose(fdatapesanan);
+            puts("Pesanan berhasil diupdate dan diberi harga");getchar();getchar();
+            menuadmin();
+            }
+            else
+            {
+            fdatapesanan = fopen("datapesanan.dat", "rb");
+            while(fread(&datapesanan,sizeof(datapesanan),1,fdatapesanan)==1){
+                if(strcmp(datapesanan.namauser,pilihuser)!=0){
+                    fwrite(&datapesanan,sizeof(datapesanan),1,fdatapesanan3);
+                    }
+                }
+            }            
     fclose(fdatapesanan2);
     fclose(fdatapesanan);
     fclose(fdatapesanan3);
@@ -445,13 +461,29 @@ void searching(){
 
 // Pembuatan user baru
 void userbaru(){
-    flistuser = fopen("daftaruser.dat", "ab");
-	printf("Masukkan nama pengguna  : ");fgets(listuser.namauser, sizeof(listuser.namauser), stdin);
+    i = 0;
+	printf("Masukkan nama pengguna  : ");fgets(nameuser, sizeof(nameuser), stdin);//fgets(listuser.namauser, sizeof(listuser.namauser), stdin);
     fflush(stdin);
-	printf("Masukkan kata sandi : ");fgets(listuser.sandiuser, sizeof(listuser.sandiuser), stdin);
+	printf("Masukkan kata sandi : ");fgets(passuser, sizeof(passuser), stdin);//fgets(listuser.sandiuser, sizeof(listuser.sandiuser), stdin);
+    flistuser = fopen("daftaruser.dat", "rb");
+    while(fread(&listuser,sizeof(listuser),1,flistuser)==1){
+        if(strcmp(nameuser, listuser.namauser)==0){
+            i+=1;
+        }
+    }
+    if(i==1){
+        puts("Nama pengguna sudah ada, silahkan gunakan nama lain");
+        fclose(flistuser);
+        getchar();
+        userbaru();
+    }
+    fclose(flistuser);
+    flistuser = fopen("daftaruser.dat", "ab");
+    strcpy(listuser.namauser, nameuser);
+    strcpy(listuser.sandiuser, passuser);
 	fwrite(&listuser, sizeof(listuser), 1, flistuser);
-	fclose(flistuser);
 	puts("Pembuatan user baru telah selesai!");
+    fclose(flistuser);
 	getchar();
     clearscrn();
     loginuser();
